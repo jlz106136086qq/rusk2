@@ -565,27 +565,36 @@ isSosMode
     }
     return Container();
   }
+Widget buildInstallCard(String title, String content, String btnText,
+    GestureTapCallback onPressed,
+    {double marginTop = 20.0,
+    String? help,
+    String? link,
+    bool? closeButton,
+    String? closeOption}) {
+  return Container(
+    width: double.infinity,
+    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+    decoration: BoxDecoration(
+      color: Colors.green.shade50,           // 🔵 改为绿色浅底
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(color: Colors.green.shade200),
+    ),
+    child: const Center(
+      child: Text(
+        '富氏邦',
+        style: TextStyle(
+          fontSize: 28,
+          fontWeight: FontWeight.bold,
+          color: Colors.green.shade900,      // 文字颜色也适配绿色深色
+        ),
+      ),
+    ),
+  );
+}
 
-  Widget buildInstallCard(String title, String content, String btnText,
-      GestureTapCallback onPressed,
-      {double marginTop = 20.0,
-      String? help,
-      String? link,
-      bool? closeButton,
-      String? closeOption}) {
-    if (bind.mainGetBuildinOption(key: kOptionHideHelpCards) == 'Y' &&
-        content != 'install_daemon_tip') {
-      return const SizedBox();
-    }
-    void closeCard() async {
-      if (closeOption != null) {
-        await bind.mainSetLocalOption(key: closeOption, value: 'N');
-        if (bind.mainGetLocalOption(key: closeOption) == 'N') {
-          setState(() {
-            isCardClosed = true;
-          });
-        }
-      } else {
+  else {
         setState(() {
           isCardClosed = true;
         });
