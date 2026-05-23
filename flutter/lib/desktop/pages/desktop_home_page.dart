@@ -100,24 +100,47 @@ isSosMode
       buildTip(context),
       if (!isOutgoingOnly) buildIDBoard(context),
       if (!isOutgoingOnly) buildPasswordBoard(context),
-      FutureBuilder<Widget>(
-        future: Future.value(
-            Obx(() => buildHelpCards(stateGlobal.updateUrl.value))),
-        builder: (_, data) {
-          if (data.hasData) {
-            if (isIncomingOnly || isSosMode) {
-              if (isInHomePage()) {
-                Future.delayed(Duration(milliseconds: 300), () {
-                  _updateWindowSize();
-                });
-              }
-            }
-            return data.data!;
-          } else {
-            return const Offstage();
-          }
-        },
+    //  FutureBuilder<Widget>(
+    //    future: Future.value(
+     //       Obx(() => buildHelpCards(stateGlobal.updateUrl.value))),
+     //   builder: (_, data) {
+       //   if (data.hasData) {
+         //   if (isIncomingOnly || isSosMode) {
+        //      if (isInHomePage()) {
+        //        Future.delayed(Duration(milliseconds: 300), () {
+       //           _updateWindowSize();
+      //          });
+    //          }
+   //         }
+   //         return data.data!;
+   //       } else {
+   //         return const Offstage();
+   //       }
+   //     },
+   //   ),
+
+      // 原来的 FutureBuilder 已注释
+// 新增富氏邦卡片
+Container(
+  width: double.infinity,
+  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+  padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+  decoration: BoxDecoration(
+    color: Colors.green.shade50,
+    borderRadius: BorderRadius.circular(12),
+    border: Border.all(color: Colors.green.shade200),
+  ),
+  child: const Center(
+    child: Text(
+      '富氏邦',
+      style: TextStyle(
+        fontSize: 28,
+        fontWeight: FontWeight.bold,
+        color: Colors.green,
       ),
+    ),
+  ),
+),
       buildPluginEntry(),
     ];
     if (isIncomingOnly || isSosMode) {
