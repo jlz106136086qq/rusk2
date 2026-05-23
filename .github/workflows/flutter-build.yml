@@ -1,4 +1,4 @@
-name: Windows version of RustDesk
+name: Win
 
 on:
   workflow_call:
