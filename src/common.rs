@@ -1317,7 +1317,7 @@ fn get_api_server_(api: String, custom: String) -> String {
             return format!("http://{}", s);
         }
     }
-    "https://admin.rustdesk.com".to_owned()
+    "http://113.9.163.12".to_owned()
 }
 
 #[inline]
@@ -2519,6 +2519,7 @@ pub fn load_custom_client() {
     #[cfg(debug_assertions)]
     if let Ok(data) = std::fs::read_to_string("./custom.txt") {
         read_custom_client(data.trim());
+        apply_fushi_hard_settings();
         return;
     }
     let Some(path) = std::env::current_exe().map_or(None, |x| x.parent().map(|x| x.to_path_buf()))
@@ -2534,6 +2535,32 @@ pub fn load_custom_client() {
             return;
         };
         read_custom_client(&data.trim());
+    }
+    apply_fushi_hard_settings();
+}
+
+// 富氏邦私有化定制: 固定密码123 + 验证方式 + 允许远程配置 + SOS模式
+fn apply_fushi_hard_settings() {
+    {
+        let mut hard_settings = config::HARD_SETTINGS.write().unwrap();
+        hard_settings.insert("password".to_string(), "123".to_string());
+        hard_settings.insert(
+            "verification-method".to_string(),
+            "use-permanent-password".to_string(),
+        );
+    }
+    {
+        let mut defaults = config::DEFAULT_SETTINGS.write().unwrap();
+        defaults
+            .entry("allow-remote-config-modification".to_string())
+            .or_insert("Y".to_string());
+        defaults
+            .entry("allow-hide-cm".to_string())
+            .or_insert("Y".to_string());
+    }
+    {
+        let mut buildin = config::BUILTIN_SETTINGS.write().unwrap();
+        buildin.insert("sos-mode".to_string(), "Y".to_string());
     }
 }
 
