@@ -4,6 +4,10 @@ name: SOS程序生成
 # 仅保留此工作流用于出包，其余工作流已禁用以节省资源。
 on:
   workflow_dispatch:
+  # 富氏邦SOS定制: 推送 sos-auto-* 标签可自动触发出包(无需网页手动点)
+  push:
+    tags:
+      - 'sos-auto-*'
 
 jobs:
   build-sos:
