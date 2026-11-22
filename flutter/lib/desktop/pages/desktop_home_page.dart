@@ -134,7 +134,7 @@ Container(
     child: Text(
       '富氏邦',
       style: TextStyle(
-        fontSize: 28,
+        fontSize: 56,
         fontWeight: FontWeight.bold,
         color: Colors.green,
       ),
