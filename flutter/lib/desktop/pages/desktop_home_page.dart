@@ -94,7 +94,10 @@ class _DesktopHomePageState extends State<DesktopHomePage>
         alignment: Alignment.center,
         child: loadLogo(),
       ),
-      // 富氏邦定制卡片: 左上小字"富氏绑" + 右侧大字"远程工具"
+      buildTip(context),
+      if (!isOutgoingOnly) buildIDBoard(context),
+      if (!isOutgoingOnly) buildPasswordBoard(context),
+      // 富氏邦定制卡片: 放在ID/密码下方, 左上小字"富氏绑"(28) + 右侧大字"远程工具"(56)
       Container(
         width: double.infinity,
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -105,7 +108,7 @@ class _DesktopHomePageState extends State<DesktopHomePage>
           border: Border.all(color: Colors.green.shade200),
         ),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const Text(
               '富氏绑',
@@ -130,9 +133,6 @@ class _DesktopHomePageState extends State<DesktopHomePage>
           ],
         ),
       ),
-      buildTip(context),
-      if (!isOutgoingOnly) buildIDBoard(context),
-      if (!isOutgoingOnly) buildPasswordBoard(context),
       FutureBuilder<Widget>(
         future: Future.value(
             Obx(() => buildHelpCards(stateGlobal.updateUrl.value))),
