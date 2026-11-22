@@ -83,6 +83,8 @@ class _DesktopHomePageState extends State<DesktopHomePage>
   Widget buildLeftPane(BuildContext context) {
     final isIncomingOnly = bind.isIncomingOnly();
     final isOutgoingOnly = bind.isOutgoingOnly();
+    // 富氏邦SOS定制: SOS模式也显示连接状态
+    final isSosMode = bind.mainGetBuildinOption(key: 'sos-mode') == 'Y';
     final children = <Widget>[
       if (!isOutgoingOnly) buildPresetPasswordWarning(),
       if (bind.isCustomClient())
@@ -97,11 +99,11 @@ class _DesktopHomePageState extends State<DesktopHomePage>
       buildTip(context),
       if (!isOutgoingOnly) buildIDBoard(context),
       if (!isOutgoingOnly) buildPasswordBoard(context),
-      // 富氏邦定制卡片: 放在ID/密码下方, 左上小字"富氏绑"(28) + 右侧大字"远程工具"(56)
+      // 富氏邦定制卡片: 放在ID/密码下方, 左侧小字"富氏绑"(28) + "远程工具"(32,单行,靠左)
       Container(
         width: double.infinity,
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+        margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 12),
         decoration: BoxDecoration(
           color: Colors.green.shade50,
           borderRadius: BorderRadius.circular(12),
@@ -118,16 +120,14 @@ class _DesktopHomePageState extends State<DesktopHomePage>
                 color: Colors.green,
               ),
             ),
-            const SizedBox(width: 12),
-            const Expanded(
-              child: Text(
-                '远程工具',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 56,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.green,
-                ),
+            const SizedBox(width: 14),
+            const Text(
+              '远程工具',
+              maxLines: 1,
+              style: TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+                color: Colors.green,
               ),
             ),
           ],
@@ -152,10 +152,12 @@ class _DesktopHomePageState extends State<DesktopHomePage>
         },
       ),
     ];
-    if (isIncomingOnly) {
+    if (isIncomingOnly || isSosMode) {
       children.addAll([
         Divider(),
         OnlineStatusWidget(
+          // 富氏邦SOS定制: 连接状态字号放大一倍(14->28)
+          statusFontSize: isSosMode ? 28 : null,
           onSvcStatusChanged: () {
             if (isInHomePage()) {
               Future.delayed(Duration(milliseconds: 300), () {
@@ -511,6 +513,10 @@ class _DesktopHomePageState extends State<DesktopHomePage>
     }
 
     if (isWindows && !bind.isDisableInstallation()) {
+      // 富氏邦SOS定制: 不显示底部红色"未安装/UAC"提示卡片
+      if (bind.mainGetBuildinOption(key: 'sos-mode') == 'Y') {
+        return Container();
+      }
       if (!bind.mainIsInstalled()) {
         return buildInstallCard(
             "", bind.isOutgoingOnly() ? "" : "install_tip", "Install",

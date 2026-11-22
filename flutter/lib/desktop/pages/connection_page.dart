@@ -22,10 +22,12 @@ import '../../models/platform_model.dart';
 import '../../desktop/widgets/material_mod_popup_menu.dart' as mod_menu;
 
 class OnlineStatusWidget extends StatefulWidget {
-  const OnlineStatusWidget({Key? key, this.onSvcStatusChanged})
+  const OnlineStatusWidget({Key? key, this.onSvcStatusChanged, this.statusFontSize})
       : super(key: key);
 
   final VoidCallback? onSvcStatusChanged;
+  // 富氏邦SOS定制: 可指定连接状态文字字号(默认沿用 em)
+  final double? statusFontSize;
 
   @override
   State<OnlineStatusWidget> createState() => _OnlineStatusWidgetState();
@@ -38,7 +40,10 @@ class _OnlineStatusWidgetState extends State<OnlineStatusWidget> {
   Timer? _updateTimer;
 
   double get em => 14.0;
-  double? get height => bind.isIncomingOnly() ? null : em * 3;
+  // 富氏邦SOS定制: 放大字号时同步放大容器高度,避免文字被裁切
+  double? get height => bind.isIncomingOnly()
+      ? null
+      : (widget.statusFontSize != null ? widget.statusFontSize! * 1.8 : em * 3);
 
   void onUsePublicServerGuide() {
     const url = "https://rustdesk.com/pricing";
@@ -164,7 +169,7 @@ class _OnlineStatusWidgetState extends State<OnlineStatusWidget> {
               : stateGlobal.svcStatus.value == SvcStatus.notReady
                   ? translate("not_ready_status")
                   : translate('Ready'),
-      style: TextStyle(fontSize: em),
+      style: TextStyle(fontSize: widget.statusFontSize ?? em),
     );
   }
 
