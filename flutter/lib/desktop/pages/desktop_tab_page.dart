@@ -97,7 +97,10 @@ class _DesktopTabPageState extends State<DesktopTabPage> {
             body: DesktopTab(
               controller: tabController,
               tail: Offstage(
-                offstage: bind.isIncomingOnly() || bind.isDisableSettings(),
+                // 富氏邦SOS定制: SOS模式隐藏设置入口
+                offstage: bind.isIncomingOnly() ||
+                    bind.isDisableSettings() ||
+                    bind.mainGetBuildinOption(key: 'sos-mode') == 'Y',
                 child: ActionIcon(
                   message: 'Settings',
                   icon: IconFont.menu,

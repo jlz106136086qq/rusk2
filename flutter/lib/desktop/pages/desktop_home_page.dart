@@ -59,13 +59,18 @@ class _DesktopHomePageState extends State<DesktopHomePage>
   Widget build(BuildContext context) {
     super.build(context);
     final isIncomingOnly = bind.isIncomingOnly();
+    final isSosMode = bind.mainGetBuildinOption(key: 'sos-mode') == 'Y';
     return _buildBlock(
         child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        buildLeftPane(context),
-        if (!isIncomingOnly) const VerticalDivider(width: 1),
-        if (!isIncomingOnly) Expanded(child: buildRightPane(context)),
+        // 富氏邦SOS定制: SOS模式左侧固定380宽,隐藏右侧连接页(输入ID/链接的框)
+        isSosMode
+            ? SizedBox(width: 380, child: buildLeftPane(context))
+            : buildLeftPane(context),
+        if (!isIncomingOnly && !isSosMode) const VerticalDivider(width: 1),
+        if (!isIncomingOnly && !isSosMode)
+          Expanded(child: buildRightPane(context)),
       ],
     ));
   }

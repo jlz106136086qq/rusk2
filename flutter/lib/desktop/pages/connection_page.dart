@@ -133,7 +133,8 @@ class _OnlineStatusWidgetState extends State<OnlineStatusWidget> {
             if (!isIncomingOnly) startServiceWidget(),
             // ready && public
             // No need to show the guide if is custom client.
-            if (!isIncomingOnly) setupServerWidget(),
+            // 富氏邦SOS定制: SOS模式不显示服务器设置引导
+            if (!isIncomingOnly && bind.mainGetBuildinOption(key: 'sos-mode') != 'Y') setupServerWidget(),
           ],
         );
 

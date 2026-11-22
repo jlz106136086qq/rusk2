@@ -63,24 +63,32 @@ enum SettingsTabKey {
 
 class DesktopSettingPage extends StatefulWidget {
   final SettingsTabKey initialTabkey;
+  // 富氏邦SOS定制: SOS模式下所有设置标签均不显示
+  static bool get _isSosMode =>
+      bind.mainGetBuildinOption(key: 'sos-mode') == 'Y';
+
   static final List<SettingsTabKey> tabKeys = [
-    if (bind.mainGetBuildinOption(key: kOptionHideGeneralSetting) != 'Y')
+    if (!_isSosMode &&
+        bind.mainGetBuildinOption(key: kOptionHideGeneralSetting) != 'Y')
       SettingsTabKey.general,
-    if (!isWeb &&
+    if (!_isSosMode &&
+        !isWeb &&
         !bind.isOutgoingOnly() &&
         !bind.isDisableSettings() &&
         bind.mainGetBuildinOption(key: kOptionHideSecuritySetting) != 'Y')
       SettingsTabKey.safety,
-    if (!bind.isDisableSettings() &&
+    if (!_isSosMode &&
+        !bind.isDisableSettings() &&
         bind.mainGetBuildinOption(key: kOptionHideNetworkSetting) != 'Y')
       SettingsTabKey.network,
-    if (!bind.isIncomingOnly()) SettingsTabKey.display,
-    if (!bind.isDisableAccount()) SettingsTabKey.account,
-    if (isWindows &&
+    if (!_isSosMode && !bind.isIncomingOnly()) SettingsTabKey.display,
+    if (!_isSosMode && !bind.isDisableAccount()) SettingsTabKey.account,
+    if (!_isSosMode &&
+        isWindows &&
         !bind.isDisableSettings() &&
         bind.mainGetBuildinOption(key: kOptionHideRemotePrinterSetting) != 'Y')
       SettingsTabKey.printer,
-    SettingsTabKey.about,
+    if (!_isSosMode) SettingsTabKey.about,
   ];
 
   DesktopSettingPage({Key? key, required this.initialTabkey}) : super(key: key);
