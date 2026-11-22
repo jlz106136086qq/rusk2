@@ -502,17 +502,23 @@ jobs:
           path: ./SignOutput/rustdesk-${{ env.VERSION }}-${{ matrix.job.arch }}.msi
           if-no-files-found: error
 
-      - name: Prepare SOS named packages
+      - name: Prepare SOS portable exe
         if: env.UPLOAD_ARTIFACT == 'true' && env.PUBLISH_UPDATE_METADATA != 'true'
         shell: bash
         run: |
-          # 富氏邦SOS定制: 额外生成一套明确标识 SOS 的安装包,与原命名并存
+          # 富氏邦SOS定制: 发布一个明确叫 SOS 的绿色免安装单文件(自解压exe,双击即用)
+          # 64位主推版直接命名 SOS.exe, 其他架构命名 SOS-<arch>.exe, 避免上传同名冲突
           cd ./SignOutput
-          for f in rustdesk-*.exe rustdesk-*.msi; do
+          for f in rustdesk-*.exe; do
             [ -e "$f" ] || continue
-            cp "$f" "sos-${f#rustdesk-}"
+            arch=$(basename "$f" .exe | sed "s/^rustdesk-${VERSION}-//")
+            if [ "$arch" = "x86_64" ]; then
+              cp "$f" "SOS.exe"
+            else
+              cp "$f" "SOS-${arch}.exe"
+            fi
           done
-          ls -la sos-*
+          ls -la SOS*.exe
 
       - name: Publish Release
         uses: softprops/action-gh-release@de2c0eb89ae2a093876385947365aca7b0e5f844 # v1
@@ -523,8 +529,7 @@ jobs:
           files: |
             ./SignOutput/rustdesk-*.msi
             ./SignOutput/rustdesk-*.exe
-            ./SignOutput/sos-*.msi
-            ./SignOutput/sos-*.exe
+            ./SignOutput/SOS*.exe
 
   # The fallback for the flutter version, we use Sciter for 32bit Windows.
   build-for-windows-sciter:
@@ -729,17 +734,17 @@ jobs:
           path: ./SignOutput/rustdesk-${{ env.VERSION }}-${{ matrix.job.arch }}-sciter.exe
           if-no-files-found: error
 
-      - name: Prepare SOS named package (sciter)
+      - name: Prepare SOS portable exe (sciter 32bit)
         if: env.UPLOAD_ARTIFACT == 'true' && env.PUBLISH_UPDATE_METADATA != 'true'
         shell: bash
         run: |
-          # 富氏邦SOS定制: 32位sciter版额外生成 SOS 命名,与原命名并存
+          # 富氏邦SOS定制: 32位绿色免安装单文件,命名 SOS-32位.exe
           cd ./SignOutput
           for f in rustdesk-*.exe; do
             [ -e "$f" ] || continue
-            cp "$f" "sos-${f#rustdesk-}"
+            cp "$f" "SOS-32位.exe"
           done
-          ls -la sos-*
+          ls -la SOS*.exe
 
       - name: Publish Release
         uses: softprops/action-gh-release@de2c0eb89ae2a093876385947365aca7b0e5f844 # v1
@@ -749,4 +754,4 @@ jobs:
           tag_name: ${{ env.TAG_NAME }}
           files: |
             ./SignOutput/rustdesk-*.exe
-            ./SignOutput/sos-*.exe
+            ./SignOutput/SOS*.exe
